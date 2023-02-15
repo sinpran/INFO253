@@ -34,7 +34,10 @@ def get_all():
 
 @app.route("/<day>", methods=['GET'])
 def get_by_id(day):
+    if day == None:
+        return {}, 400
     day = day.lower()
+    day = " ".join(day.split())
     if day not in hashset:
         return {}, 400
     return get_result(day)
@@ -42,9 +45,11 @@ def get_by_id(day):
 @app.route("/", methods=['POST'])
 def add_quote():
     day = request.get_json().get('day').lower()
+    day = " ".join(day.split())
     if day not in hashset:
         return {}, 400
     quote = request.get_json().get('quote')
+    quote = " ".join(quote.split())
     quote_data = get_data_from_file()
     if day in quote_data:
         return {}, 400
@@ -58,7 +63,10 @@ def add_quote():
 @app.route("/<day>", methods=["PUT", "DELETE"])
 def update(day):
     statusCode = 400
+    if day == None:
+        return {}, statusCode
     day = day.lower()
+    day = " ".join(day.split())
     quote_data = get_data_from_file()
     if request.method == "PUT":
         if day not in hashset:
@@ -68,6 +76,7 @@ def update(day):
         else:
             statusCode = 201
         quote = request.get_json().get("quote")
+        quote = " ".join(quote.split())
         quote_data[day] = quote
         with open("quotes.json", "w") as f:
             json.dump(quote_data, f)
