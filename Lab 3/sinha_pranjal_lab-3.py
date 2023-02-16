@@ -44,11 +44,14 @@ def get_by_id(day):
 
 @app.route("/", methods=['POST'])
 def add_quote():
-    day = request.get_json().get('day').lower()
+    data = request.get_json()
+    if 'day' not in data or 'quote' not in data:
+        return {}, 400
+    day = data.get('day').lower()
     day = " ".join(day.split())
     if day not in hashset:
         return {}, 400
-    quote = request.get_json().get('quote')
+    quote = data.get('quote')
     quote = " ".join(quote.split())
     quote_data = get_data_from_file()
     if day in quote_data:
@@ -67,15 +70,17 @@ def update(day):
         return {}, statusCode
     day = day.lower()
     day = " ".join(day.split())
+    if day not in hashset:
+            return {}, statusCode
     quote_data = get_data_from_file()
     if request.method == "PUT":
-        if day not in hashset:
-            return {}, statusCode
         if day in quote_data:
             statusCode = 200
         else:
             statusCode = 201
-        quote = request.get_json().get("quote")
+        quote = request.get_json().get("quote", "invalid")
+        if quote == "invalid":
+            return {}, 400
         quote = " ".join(quote.split())
         quote_data[day] = quote
         with open("quotes.json", "w") as f:
@@ -84,8 +89,6 @@ def update(day):
             day : quote
         }), statusCode
     if request.method == "DELETE":
-        if day not in hashset:
-            return {}, statusCode
         if day in quote_data:
             statusCode = 200
         else:
