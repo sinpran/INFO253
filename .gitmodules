@@ -1,3 +1,7 @@
 [submodule "assign1-sp2023-sinpran"]
 	path = assign1-sp2023-sinpran
 	url = https://github.com/UCB-INFO-BACKEND-WEBARCH/assign1-sp2023-sinpran
+
+[submodule "assignment-2-sinpran"]
+	path = assignment-2-sinpran
+	url = https://github.com/UCB-INFO-BACKEND-WEBARCH/assignment-2-sinpran
