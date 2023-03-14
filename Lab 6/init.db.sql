@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS quotes (
+    day VARCHAR(20),
+    quote VARCHAR(1000)
+);

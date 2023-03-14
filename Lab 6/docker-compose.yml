@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: 27055041_db
+    volumes:
+      - ./init.db.sql:/docker-entrypoint-initdb.d/init.db.sql
+
+  app:
+    build: ./app
+    image: quote-image
+    ports:
+      - "8000:5050"
+    depends_on:
+      - db
+volumes:
+  postgres-volume: {}
