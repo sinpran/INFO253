@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:latest
+    container_name: db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: celery
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+
+  worker:
+    build: ./worker
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=db+postgresql://postgres:postgres@db:5432/celery
+    volumes:
+      - ./worker/worker.py:/app/worker.py
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+
+  app:
+    build: ./app
+    volumes:
+      - ./worker/worker.py:/app/worker.py
+    ports:
+      - 5050:5050
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=db+postgresql://postgres:postgres@db:5432/celery
+    depends_on:
+      - db
+      - redis
+      - worker
+  job_viewer:
+    image: mher/flower
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379
+      - FLOWER_PORT=8888
+    ports:
+      - 8888:8888
+    depends_on:
+      - redis
+volumes:
+  postgres-volume: {}
