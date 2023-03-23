@@ -21,7 +21,7 @@ def count():
 def getResultFromID(id):
     res = AsyncResult(id, app=celery_app)
     if res.status == "SUCCESS":
-        return json.dumps({"Result" : res.get()}), 200
+        return json.dumps({"Result" : res.get(), "Status" : res.status}), 200
     else:
         return json.dumps({"Error" : "Job not finished or incorrect ID"}), 400
 
