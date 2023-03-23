@@ -19,14 +19,11 @@ def count():
 
 @app.route('/status/<id>')
 def getResultFromID(id):
-    try:
-        res = AsyncResult(id, app=celery_app)
-    except:
-        return json.dumps({"error":"invalid ID"}), 400
+    res = AsyncResult(id, app=celery_app)
     if res.status == "SUCCESS":
-        return json.dumps({"Result" : res.status}), 200
+        return json.dumps({"Result" : res.get()}), 200
     else:
-        return json.dumps({"Result" : res.status}), 400
+        return json.dumps({"Error" : "Job not finished or incorrect ID"}), 400
 
 
 if __name__ == "__main__":
